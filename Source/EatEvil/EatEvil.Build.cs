@@ -10,6 +10,6 @@ public class EatEvil : ModuleRules
 
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "NavigationSystem", "AIModule", "Niagara", "EnhancedInput" });
 
-		PublicIncludePaths.AddRange(new string[] {"EatEvil", });
+		PublicIncludePaths.AddRange(new string[] {"EatEvil", "EatEvil/Framework" });
     }
 }
