@@ -20,6 +20,8 @@ AEE_PlayerController::AEE_PlayerController()
 	DefaultMouseCursor = EMouseCursor::Default;
 	CachedDestination = FVector::ZeroVector;
 	FollowTime = 0.f;
+
+	bEnableMouseOverEvents = true;
 }
 
 void AEE_PlayerController::BeginPlay()

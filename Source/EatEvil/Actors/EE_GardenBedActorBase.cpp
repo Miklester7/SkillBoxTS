@@ -2,26 +2,63 @@
 
 
 #include "Actors/EE_GardenBedActorBase.h"
+#include "Framework/EE_GameInstance.h"
+#include "Components/WidgetComponent.h"
+#include "Actors/EE_PlantActor.h"
 
-// Sets default values
+DEFINE_LOG_CATEGORY_STATIC(AEE_GardenBedActorBaseLog, All, All);
+
 AEE_GardenBedActorBase::AEE_GardenBedActorBase()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
+	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
+	SetRootComponent(SceneComponent);
+
+	InteractWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("InteractWidget"));
+	InteractWidget->SetupAttachment(SceneComponent);
 }
 
-// Called when the game starts or when spawned
 void AEE_GardenBedActorBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	check(PlantActorClass);
+
+	OnBeginCursorOver.AddDynamic(this, &ThisClass::Test);
+
+	if (PlantRow == NAME_None) return;
+
+	const auto GI = GetGameInstance<UEE_GameInstance>();
+	if (GI)
+	{
+		if (GI->GetPlantInfo(PlantRow, CurrentPlantInfo)) SetPlant();
+	}
 }
 
-// Called every frame
-void AEE_GardenBedActorBase::Tick(float DeltaTime)
+void AEE_GardenBedActorBase::Test(AActor* TouchedActor)
 {
-	Super::Tick(DeltaTime);
+	UE_LOG(AEE_GardenBedActorBaseLog, Warning, TEXT("OnBeginCursorOver"));
+}
 
+void AEE_GardenBedActorBase::SetPlant()
+{
+	if (bIsClear && !SpawnMeshLocations.IsEmpty() && GetWorld())
+	{
+		bIsClear = false;
+
+		for (const auto& SpwnLocation : SpawnMeshLocations)
+		{
+			FActorSpawnParameters SpawnParam;
+			SpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+			auto PlActor = GetWorld()->SpawnActor<AEE_PlantActor>(PlantActorClass, SpwnLocation + GetActorLocation(), CurrentPlantInfo.MeshTransform.Rotator(), SpawnParam);
+			if (PlActor)
+			{
+				PlActor->InitActor(CurrentPlantInfo.SpawnObjectMesh, CurrentPlantInfo.MeshTransform.GetScale3D());
+				Plants.Add(PlActor);
+			}
+		}
+	}
 }
 

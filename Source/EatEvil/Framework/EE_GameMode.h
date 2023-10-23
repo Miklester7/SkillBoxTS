@@ -4,15 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "EatEvilGameMode.generated.h"
+#include "EE_GameMode.generated.h"
 
 UCLASS(minimalapi)
-class AEatEvilGameMode : public AGameModeBase
+class AEE_GameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
 public:
-	AEatEvilGameMode();
+	AEE_GameMode();
 };
 
 
