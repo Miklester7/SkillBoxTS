@@ -22,6 +22,7 @@ AEE_PlayerController::AEE_PlayerController()
 	FollowTime = 0.f;
 
 	bEnableMouseOverEvents = true;
+	bEnableClickEvents = true;
 }
 
 void AEE_PlayerController::BeginPlay()

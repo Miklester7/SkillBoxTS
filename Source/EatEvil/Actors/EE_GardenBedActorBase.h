@@ -7,8 +7,13 @@
 #include "EE_Types.h"
 #include "EE_GardenBedActorBase.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnTimerUpdated, float);
+
 class UWidgetComponent;
 class AEE_PlantActor;
+class UEE_GardenStatusWidget;
+class UStaticMeshComponent;
+class UBoxComponent;
 
 UCLASS()
 class EATEVIL_API AEE_GardenBedActorBase : public AActor
@@ -18,19 +23,39 @@ class EATEVIL_API AEE_GardenBedActorBase : public AActor
 public:	
 	AEE_GardenBedActorBase();
 
+	FOnTimerUpdated OnTimerUpdated;
 protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
-	void Test(AActor* TouchedActor);
+	void OnCursorOver(UPrimitiveComponent* TouchedComponent);
+
+	UFUNCTION()
+	void OnEndCursorOver(UPrimitiveComponent* TouchedComponent);
+
+	UFUNCTION()
+	void OnMouseReleased(UPrimitiveComponent* TouchedComponent, FKey ButtonReleased);
 
 	void SetPlant();
+
+	void GrowthCheck();
+
+	void HideWidget();
 protected:
 	UPROPERTY(EditAnywhere,Category = "Components")
 	USceneComponent* SceneComponent;
 
 	UPROPERTY(EditAnywhere, Category = "Components")
 	UWidgetComponent* InteractWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Components")
+	UStaticMeshComponent* StaticMeshComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Components")
+	UBoxComponent* BoxCollision;
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<UEE_GardenStatusWidget> GardenStatusWidgetClass;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Content")
 	FName PlantRow = NAME_None;
@@ -44,7 +69,10 @@ private:
 	UPROPERTY()
 	TArray<TObjectPtr<AEE_PlantActor>> Plants;
 
-	FPlantsInfo CurrentPlantInfo;
+	FPlantsInfo CurrentPlantInfo; 
 
 	bool bIsClear{ true };
+
+	FTimerHandle GrowthRateTimer;
+	float CurrentTime{ 0.f };
 };

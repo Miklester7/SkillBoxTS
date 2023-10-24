@@ -17,6 +17,8 @@ public:
 	AEE_PlantActor();
 
 	void InitActor(UStaticMesh* Mesh,FVector InitialScale3D);
+
+	void SetScale(float Value);
 protected:
 	UPROPERTY(EditAnywhere, Category = "Components")
 	USceneComponent* SceneComponent;

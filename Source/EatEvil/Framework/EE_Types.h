@@ -7,6 +7,14 @@
 
 class UStaticMesh;
 
+UENUM()
+enum EGardenState : uint8
+{
+	Empty = 0,
+	Waiting,
+	Completed
+};
+
 USTRUCT(BlueprintType)
 struct FPlantsInfo : public FTableRowBase
 {

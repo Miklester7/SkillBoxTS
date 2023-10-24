@@ -23,6 +23,11 @@ void AEE_PlantActor::InitActor(UStaticMesh* Mesh, FVector InitialScale3D)
 	StaticMeshComponent->SetWorldScale3D(InitialScale3D);
 }
 
+void AEE_PlantActor::SetScale(float Value)
+{
+	StaticMeshComponent->SetWorldScale3D(FVector(Value));
+}
+
 void AEE_PlantActor::BeginPlay()
 {
 	Super::BeginPlay();
