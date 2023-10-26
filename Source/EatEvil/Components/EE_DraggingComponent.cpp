@@ -3,7 +3,6 @@
 
 #include "Components/EE_DraggingComponent.h"
 
-// Sets default values for this component's properties
 UEE_DraggingComponent::UEE_DraggingComponent()
 {
 
@@ -13,5 +12,14 @@ UEE_DraggingComponent::UEE_DraggingComponent()
 void UEE_DraggingComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
+}
+
+void UEE_DraggingComponent::TakeObject(const FName& RowName, const FText& ObjectGameName, UTexture2D* Image)
+{
+	OnTakeObject.Broadcast(RowName, ObjectGameName, Image);
+}
+
+void UEE_DraggingComponent::PutObject(const FName& RowName)
+{
+	OnPutObject.Broadcast(RowName);
 }

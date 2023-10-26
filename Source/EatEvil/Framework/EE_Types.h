@@ -31,6 +31,9 @@ struct FPlantsInfo : public FTableRowBase
 
 	UPROPERTY(EditDefaultsOnly, Category = "Game")
 	FText PlantName;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Game")
+	UTexture2D* Image;
 };
 
 class EATEVIL_API EE_Types : public UBlueprintFunctionLibrary

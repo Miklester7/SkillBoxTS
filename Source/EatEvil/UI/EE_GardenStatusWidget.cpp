@@ -61,7 +61,18 @@ void UEE_GardenStatusWidget::UpdateStatus(EGardenState State)
 
 void UEE_GardenStatusWidget::OnActionButtonClicked()
 {
-	UE_LOG(UEE_GardenStatusWidgetLog, Error, TEXT("ButtonClicked!"));
+	switch (CurrentState)
+	{
+	case Empty:
+		break;
+	case Waiting:
+		break;
+	case Completed:
+		GetContentDelegate.Broadcast();
+		break;
+	default:
+		break;
+	}
 }
 
 void UEE_GardenStatusWidget::HideWidget()

@@ -8,6 +8,7 @@
 #include "UI/EE_GardenStatusWidget.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/EE_DraggingComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(AEE_GardenBedActorBaseLog, All, All);
 
@@ -26,6 +27,9 @@ AEE_GardenBedActorBase::AEE_GardenBedActorBase()
 
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	BoxCollision->SetupAttachment(SceneComponent);
+
+	InteractZoneCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractZoneCollision"));
+	InteractZoneCollision->SetupAttachment(SceneComponent);
 }
 
 void AEE_GardenBedActorBase::BeginPlay()
@@ -41,6 +45,7 @@ void AEE_GardenBedActorBase::BeginPlay()
 	{
 		StatusWidget->InitWidget(this);
 		StatusWidget->OnWidgetHide.AddUObject(this, &ThisClass::HideWidget);
+		//StatusWidget->GetContentDelegate.AddUObject(this, &ThisClass::GetContent);
 	}
 	InteractWidget->SetHiddenInGame(true);
 
@@ -49,6 +54,8 @@ void AEE_GardenBedActorBase::BeginPlay()
 	BoxCollision->OnBeginCursorOver.AddDynamic(this, &ThisClass::OnCursorOver);
 	BoxCollision->OnEndCursorOver.AddDynamic(this, &ThisClass::OnEndCursorOver);
 	BoxCollision->OnReleased.AddDynamic(this, &ThisClass::OnMouseReleased);
+
+	InteractZoneCollision->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::InteractZoneOverlaped);
 
 	if (PlantRow == NAME_None) return;
 
@@ -80,7 +87,11 @@ void AEE_GardenBedActorBase::SetPlant()
 	if (bIsClear && !SpawnMeshLocations.IsEmpty() && GetWorld())
 	{
 		const auto StatusWidget = Cast<UEE_GardenStatusWidget>(InteractWidget->GetWidget());
-		if (StatusWidget) StatusWidget->UpdateStatus(EGardenState::Waiting);
+		if (StatusWidget) 
+		{
+			UpdateStatus(EGardenState::Waiting);
+			StatusWidget->UpdateStatus(GardenState);
+		}
 
 		bIsClear = false;
 
@@ -119,7 +130,11 @@ void AEE_GardenBedActorBase::GrowthCheck()
 	{
 		GetWorldTimerManager().ClearTimer(GrowthRateTimer);
 		const auto StatusWidget = Cast<UEE_GardenStatusWidget>(InteractWidget->GetWidget());
-		if (StatusWidget) StatusWidget->UpdateStatus(EGardenState::Completed);
+		if (StatusWidget)
+		{
+			UpdateStatus(EGardenState::Completed);
+			StatusWidget->UpdateStatus(GardenState);
+		}
 		CurrentTime = 0.f;
 	}
 }
@@ -127,4 +142,59 @@ void AEE_GardenBedActorBase::GrowthCheck()
 void AEE_GardenBedActorBase::HideWidget()
 {
 	InteractWidget->SetHiddenInGame(true);
+}
+
+void AEE_GardenBedActorBase::InteractZoneOverlaped(UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	switch (GardenState)
+	{
+	case Empty:
+		break;
+	case Waiting:
+		return;
+		break;
+	case Completed:
+	{const auto Component = OtherActor->GetComponentByClass(UEE_DraggingComponent::StaticClass());
+	if (Component)
+	{
+		const auto DraggingComponent = Cast<UEE_DraggingComponent>(Component);
+		if (DraggingComponent)
+		{
+			DraggingComponent->TakeObject(PlantRow, CurrentPlantInfo.PlantName, CurrentPlantInfo.Image);
+			const auto StatusWidget = Cast<UEE_GardenStatusWidget>(InteractWidget->GetWidget());
+			if (StatusWidget)
+			{
+				UpdateStatus(EGardenState::Empty);
+				StatusWidget->UpdateStatus(GardenState);
+			}	
+		}
+	}}
+		break;
+	default:
+		break;
+	}
+}
+
+void AEE_GardenBedActorBase::UpdateStatus(EGardenState NewStatus)
+{
+	GardenState = NewStatus;
+	if (GardenState != EGardenState::Waiting)
+	{
+		bCanInteract = true;
+	}
+	else
+	{
+		bCanInteract = false;
+	}
+
+	if (GardenState == EGardenState::Empty)
+	{
+		PlantRow = NAME_None;
+		for (const auto Plant : Plants)
+		{
+			Plant->Destroy();
+		}
+		Plants.Empty();
+	}
 }

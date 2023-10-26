@@ -13,6 +13,7 @@ class UTextBlock;
 class UButton;
 
 DECLARE_MULTICAST_DELEGATE(FOnWidgetHide);
+DECLARE_MULTICAST_DELEGATE(FGetContent);
 
 UCLASS()
 class EATEVIL_API UEE_GardenStatusWidget : public UUserWidget
@@ -27,6 +28,7 @@ public:
 	void InitWidget(AEE_GardenBedActorBase* OwnerActor);
 
 	FOnWidgetHide OnWidgetHide;
+	FGetContent GetContentDelegate;
 protected:
 	virtual void NativeOnInitialized() override;
 	

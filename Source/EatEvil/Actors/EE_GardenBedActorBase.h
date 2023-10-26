@@ -24,6 +24,11 @@ public:
 	AEE_GardenBedActorBase();
 
 	FOnTimerUpdated OnTimerUpdated;
+
+	bool CanInteract() { return bCanInteract; }
+
+	FVector GetInteractLocation() { return InteractLocations + GetActorLocation(); }
+	EGardenState GetCurrentStatus() { return GardenState; }
 protected:
 	virtual void BeginPlay() override;
 
@@ -41,6 +46,10 @@ protected:
 	void GrowthCheck();
 
 	void HideWidget();
+
+	UFUNCTION()
+	void InteractZoneOverlaped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 protected:
 	UPROPERTY(EditAnywhere,Category = "Components")
 	USceneComponent* SceneComponent;
@@ -54,6 +63,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Components")
 	UBoxComponent* BoxCollision;
 
+	UPROPERTY(EditAnywhere, Category = "Components")
+	UBoxComponent* InteractZoneCollision;
+
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<UEE_GardenStatusWidget> GardenStatusWidgetClass;
 
@@ -66,6 +78,9 @@ private:
 	UPROPERTY(EditAnywhere,Category = "Locations", meta = (MakeEditWidget = true))
 	TArray<FVector> SpawnMeshLocations;
 
+	UPROPERTY(EditAnywhere, Category = "Locations", meta = (MakeEditWidget = true))
+	FVector InteractLocations;
+
 	UPROPERTY()
 	TArray<TObjectPtr<AEE_PlantActor>> Plants;
 
@@ -75,4 +90,10 @@ private:
 
 	FTimerHandle GrowthRateTimer;
 	float CurrentTime{ 0.f };
+
+	bool bCanInteract{ true };
+
+	EGardenState GardenState = EGardenState::Empty;
+private:
+	void UpdateStatus(EGardenState NewStatus);
 };
