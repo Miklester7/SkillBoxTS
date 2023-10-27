@@ -15,6 +15,14 @@ enum EGardenState : uint8
 	Completed
 };
 
+UENUM()
+enum EActionType : uint8
+{
+	Take,
+	Put,
+
+};
+
 USTRUCT(BlueprintType)
 struct FPlantsInfo : public FTableRowBase
 {

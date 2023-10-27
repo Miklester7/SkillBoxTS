@@ -144,6 +144,16 @@ void AEE_GardenBedActorBase::HideWidget()
 	InteractWidget->SetHiddenInGame(true);
 }
 
+void AEE_GardenBedActorBase::GetContent()
+{
+	const auto StatusWidget = Cast<UEE_GardenStatusWidget>(InteractWidget->GetWidget());
+	if (StatusWidget)
+	{
+		UpdateStatus(EGardenState::Empty);
+		StatusWidget->UpdateStatus(GardenState);
+	}	
+}
+
 void AEE_GardenBedActorBase::InteractZoneOverlaped(UPrimitiveComponent* OverlappedComponent,
 	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -162,12 +172,7 @@ void AEE_GardenBedActorBase::InteractZoneOverlaped(UPrimitiveComponent* Overlapp
 		if (DraggingComponent)
 		{
 			DraggingComponent->TakeObject(PlantRow, CurrentPlantInfo.PlantName, CurrentPlantInfo.Image);
-			const auto StatusWidget = Cast<UEE_GardenStatusWidget>(InteractWidget->GetWidget());
-			if (StatusWidget)
-			{
-				UpdateStatus(EGardenState::Empty);
-				StatusWidget->UpdateStatus(GardenState);
-			}	
+			DraggingComponent->CanInteract(EActionType::Take, [&]() {return GetContent(); });
 		}
 	}}
 		break;

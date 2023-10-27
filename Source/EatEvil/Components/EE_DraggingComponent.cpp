@@ -23,3 +23,17 @@ void UEE_DraggingComponent::PutObject(const FName& RowName)
 {
 	OnPutObject.Broadcast(RowName);
 }
+
+void UEE_DraggingComponent::CanInteract(EActionType Type, TFunction<void()> Func)
+{
+	ExecutableFunc = Func;
+	OnReadyToInteract.Broadcast(Type);
+}
+
+void UEE_DraggingComponent::ExecutableFunction()
+{
+	if (ExecutableFunc)
+	{
+		ExecutableFunc();
+	}
+}
