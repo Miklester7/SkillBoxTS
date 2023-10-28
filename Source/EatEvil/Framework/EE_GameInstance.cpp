@@ -8,11 +8,12 @@ void UEE_GameInstance::Init()
 	Super::Init();
 
 	check(PlantsInfoTable);
+	UnblockedPlants.Add(FName("Test"));
 }
 
-bool UEE_GameInstance::GetPlantInfo(FName PlantName, FPlantsInfo& OutInfo)
+bool UEE_GameInstance::GetPlantInfo(FName PlantName, FObjectInfo& OutInfo)
 {
-	const auto Info = PlantsInfoTable->FindRow<FPlantsInfo>(PlantName, "", false);
+	const auto Info = PlantsInfoTable->FindRow<FObjectInfo>(PlantName, "", false);
 	if (Info)
 	{
 		OutInfo = *Info;
@@ -20,4 +21,17 @@ bool UEE_GameInstance::GetPlantInfo(FName PlantName, FPlantsInfo& OutInfo)
 	}
 
 	return false;
+}
+
+void UEE_GameInstance::PutForStorage(const FStorageObject StorageObject)
+{
+	if (StorageObject.ObjectRowName != NAME_None)
+	{
+		ObjectsInStorage.Add(StorageObject);
+
+		if (!UnblockedPlants.Contains(StorageObject.ObjectRowName))
+		{
+			UnblockedPlants.Add(StorageObject.ObjectRowName);
+		}
+	}
 }

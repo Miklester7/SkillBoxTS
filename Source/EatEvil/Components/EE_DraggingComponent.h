@@ -19,8 +19,9 @@ class EATEVIL_API UEE_DraggingComponent : public UActorComponent
 public:	
 	UEE_DraggingComponent();
 
-	void TakeObject(const FName& RowName,const FText& ObjectGameName, UTexture2D* Image);
-	void PutObject(const FName& RowName);
+	void TakeObject(const FStorageObject StorageObject,const FText& ObjectGameName, UTexture2D* Image);
+	bool PutObject(FStorageObject& StorageObject);
+	void ClearObject();
 
 	void CanInteract(EActionType Type, TFunction<void()> Func);
 	void ExecutableFunction();
@@ -33,5 +34,6 @@ protected:
 
 private:
 	TFunction<void()> ExecutableFunc;
-		
+
+	FStorageObject CurrentObject;
 };

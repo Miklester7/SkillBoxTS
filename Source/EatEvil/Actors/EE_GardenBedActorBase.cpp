@@ -32,6 +32,13 @@ AEE_GardenBedActorBase::AEE_GardenBedActorBase()
 	InteractZoneCollision->SetupAttachment(SceneComponent);
 }
 
+void AEE_GardenBedActorBase::SetNewPlant(const FObjectInfo& PlantInfo, const FName& RowName)
+{
+	CurrentPlantInfo = PlantInfo;
+	PlantRow = RowName;
+	Interact();
+}
+
 void AEE_GardenBedActorBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -45,6 +52,8 @@ void AEE_GardenBedActorBase::BeginPlay()
 	{
 		StatusWidget->InitWidget(this);
 		StatusWidget->OnWidgetHide.AddUObject(this, &ThisClass::HideWidget);
+		StatusWidget->SetOwningActors(this);
+		StatusWidget->GetContentDelegate.AddUObject(this, &ThisClass::Interact);
 		//StatusWidget->GetContentDelegate.AddUObject(this, &ThisClass::GetContent);
 	}
 	InteractWidget->SetHiddenInGame(true);
@@ -160,6 +169,15 @@ void AEE_GardenBedActorBase::InteractZoneOverlaped(UPrimitiveComponent* Overlapp
 	switch (GardenState)
 	{
 	case Empty:
+	{const auto Component = OtherActor->GetComponentByClass(UEE_DraggingComponent::StaticClass());
+	if (Component)
+	{
+		const auto DraggingComponent = Cast<UEE_DraggingComponent>(Component);
+		if (DraggingComponent)
+		{
+			DraggingComponent->CanInteract(EActionType::Put, [&]() {return SetPlant(); });
+		}
+	}}
 		break;
 	case Waiting:
 		return;
@@ -171,7 +189,8 @@ void AEE_GardenBedActorBase::InteractZoneOverlaped(UPrimitiveComponent* Overlapp
 		const auto DraggingComponent = Cast<UEE_DraggingComponent>(Component);
 		if (DraggingComponent)
 		{
-			DraggingComponent->TakeObject(PlantRow, CurrentPlantInfo.PlantName, CurrentPlantInfo.Image);
+			const FStorageObject ObjectType(PlantRow, Plants.Num(), EObjectType::Plant);
+			DraggingComponent->TakeObject(ObjectType,CurrentPlantInfo.PlantName, CurrentPlantInfo.Image);
 			DraggingComponent->CanInteract(EActionType::Take, [&]() {return GetContent(); });
 		}
 	}}
@@ -181,6 +200,7 @@ void AEE_GardenBedActorBase::InteractZoneOverlaped(UPrimitiveComponent* Overlapp
 	}
 }
 
+//ToDo UpdateWidget here
 void AEE_GardenBedActorBase::UpdateStatus(EGardenState NewStatus)
 {
 	GardenState = NewStatus;
@@ -202,4 +222,9 @@ void AEE_GardenBedActorBase::UpdateStatus(EGardenState NewStatus)
 		}
 		Plants.Empty();
 	}
+}
+
+void AEE_GardenBedActorBase::Interact()
+{
+	Super::Interact();
 }

@@ -14,14 +14,27 @@ void UEE_DraggingComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
-void UEE_DraggingComponent::TakeObject(const FName& RowName, const FText& ObjectGameName, UTexture2D* Image)
+void UEE_DraggingComponent::TakeObject(const FStorageObject StorageObject, const FText& ObjectGameName, UTexture2D* Image)
 {
-	OnTakeObject.Broadcast(RowName, ObjectGameName, Image);
+	CurrentObject = StorageObject;
+	OnTakeObject.Broadcast(StorageObject.ObjectRowName, ObjectGameName, Image);
 }
 
-void UEE_DraggingComponent::PutObject(const FName& RowName)
+bool UEE_DraggingComponent::PutObject(FStorageObject& StorageObject)
 {
-	OnPutObject.Broadcast(RowName);
+	if (CurrentObject.ObjectRowName != NAME_None)
+	{
+		OnPutObject.Broadcast(StorageObject.ObjectRowName);
+		StorageObject = CurrentObject;
+
+		return true;
+	}
+	return false;
+}
+
+void UEE_DraggingComponent::ClearObject()
+{
+	CurrentObject.ObjectRowName = NAME_None;
 }
 
 void UEE_DraggingComponent::CanInteract(EActionType Type, TFunction<void()> Func)

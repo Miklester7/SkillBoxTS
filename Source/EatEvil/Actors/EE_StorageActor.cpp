@@ -4,6 +4,8 @@
 #include "Actors/EE_StorageActor.h"
 #include "Components/BoxComponent.h"
 #include "Components/EE_DraggingComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Framework/EE_GameInstance.h"
 
 AEE_StorageActor::AEE_StorageActor()
 {
@@ -14,13 +16,23 @@ AEE_StorageActor::AEE_StorageActor()
 
 	InteractZoneCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractZoneCollision"));
 	InteractZoneCollision->SetupAttachment(SceneComponent);
+
+	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
+	BoxCollision->SetupAttachment(SceneComponent);
+
+	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
+	StaticMeshComponent->SetupAttachment(SceneComponent);
 }
 
 void AEE_StorageActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	InteractZoneCollision->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnBeginOverlap);
+
+	BoxCollision->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+	BoxCollision->OnBeginCursorOver.AddDynamic(this, &ThisClass::OnCursorOver);
+	BoxCollision->OnEndCursorOver.AddDynamic(this, &ThisClass::OnEngCursorOver);
 }
 
 void AEE_StorageActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -32,7 +44,31 @@ void AEE_StorageActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 		const auto DraggingComponent = Cast<UEE_DraggingComponent>(Component);
 		if (DraggingComponent)
 		{
-			//DraggingComponent->PutObject();
+			
+			if(!DraggingComponent->PutObject(CurrentObject)) return;
+
+			DraggingComponent->CanInteract(EActionType::Put, [&]() { return PutForStorage(); });
+			DraggingComponent->ClearObject();
 		}
+	}
+}
+
+void AEE_StorageActor::OnCursorOver(UPrimitiveComponent* TouchedComponent)
+{
+	StaticMeshComponent->SetCustomDepthStencilValue(4);
+}
+
+void AEE_StorageActor::OnEngCursorOver(UPrimitiveComponent* TouchedComponent)
+{
+	StaticMeshComponent->SetCustomDepthStencilValue(0);
+}
+
+void AEE_StorageActor::PutForStorage()
+{
+	auto GI = GetGameInstance<UEE_GameInstance>();
+	if (GI)
+	{
+		GI->PutForStorage(CurrentObject);
+		CurrentObject.ObjectRowName = NAME_None;
 	}
 }

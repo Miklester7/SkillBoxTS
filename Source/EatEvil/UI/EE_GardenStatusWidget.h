@@ -11,6 +11,9 @@ class UImage;
 class AEE_GardenBedActorBase;
 class UTextBlock;
 class UButton;
+class UScrollBox;
+class UEE_ObjectWidget;
+class AEE_GardenBedActorBase;
 
 DECLARE_MULTICAST_DELEGATE(FOnWidgetHide);
 DECLARE_MULTICAST_DELEGATE(FGetContent);
@@ -26,6 +29,8 @@ public:
 	void UpdateStatus(EGardenState State);
 
 	void InitWidget(AEE_GardenBedActorBase* OwnerActor);
+
+	void SetOwningActors(AEE_GardenBedActorBase* Actor) { GardenBedActor = Actor; }
 
 	FOnWidgetHide OnWidgetHide;
 	FGetContent GetContentDelegate;
@@ -53,6 +58,15 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* HideWidgetButton;
+
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* ShowScrollBox;
+
+	UPROPERTY(meta = (BindWidget))
+	UScrollBox* ObjectsBox;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Content")
+	TSubclassOf<UEE_ObjectWidget> ObjectWidgetClass;
 private:
 	UFUNCTION()
 	void OnActionButtonClicked();
@@ -64,4 +78,14 @@ private:
 	TObjectPtr<UMaterialInstanceDynamic> BarMaterialDynamic;
 
 	EGardenState CurrentState;
+
+	UPROPERTY()
+	TArray<TObjectPtr<UEE_ObjectWidget>> ObjectWidgets;
+
+	void ClearObjectWidgets();
+
+	UPROPERTY()
+	TObjectPtr<AEE_GardenBedActorBase> GardenBedActor;
+
+	void PlantWasSelected(const FObjectInfo& PlantInfo, const FName& RowName);
 };

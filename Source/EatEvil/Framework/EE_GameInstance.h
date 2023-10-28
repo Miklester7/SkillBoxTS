@@ -14,12 +14,18 @@ class EATEVIL_API UEE_GameInstance : public UGameInstance
 	GENERATED_BODY()
 	
 public:
-	bool GetPlantInfo(FName PlantName, FPlantsInfo& OutInfo);
+	bool GetPlantInfo(FName PlantName, FObjectInfo& OutInfo);
 
+	void PutForStorage(const FStorageObject StorageObject);
+	
+	const TArray<FName>& GetUnblockedPlants() { return UnblockedPlants; }
 protected:
 	virtual void Init() override;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataSettings")
 	UDataTable* PlantsInfoTable = nullptr;
+
+	TArray<FStorageObject> ObjectsInStorage;
+	TArray<FName> UnblockedPlants;
 };

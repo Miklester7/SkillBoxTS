@@ -23,8 +23,28 @@ enum EActionType : uint8
 
 };
 
+UENUM()
+enum EObjectType : uint8
+{
+	Plant,
+	Potion
+};
+
+USTRUCT()
+struct FStorageObject
+{
+	GENERATED_BODY()
+
+	FStorageObject(FName InObjectRowName, int32 InQuantity, EObjectType InObjectType) : ObjectRowName(InObjectRowName), Quantity(InQuantity), ObjectType(InObjectType){};
+	FStorageObject() { };
+
+	FName ObjectRowName;
+	int32 Quantity;
+	EObjectType ObjectType;
+};
+
 USTRUCT(BlueprintType)
-struct FPlantsInfo : public FTableRowBase
+struct FObjectInfo : public FTableRowBase
 {
 	GENERATED_BODY()
 

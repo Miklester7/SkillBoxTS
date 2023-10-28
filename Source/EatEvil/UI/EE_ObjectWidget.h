@@ -4,14 +4,38 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "EE_Types.h"
 #include "EE_ObjectWidget.generated.h"
 
-/**
- * 
- */
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnWasSelected, const FObjectInfo&,const FName&);
+
+class UTextBlock;
+class UImage;
+class UButton;
+
 UCLASS()
 class EATEVIL_API UEE_ObjectWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+protected:
+	virtual void NativeOnInitialized() override;
+protected:
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* ObjectName;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* ObjectImage;
+
+	UPROPERTY(meta =(BindWidget))
+	UButton* SelectionButton;
+public:
+	void SetObject(const FObjectInfo& ObjectInfo,const FName& RowName);
+
+	FOnWasSelected OnWasSelected;
+private:
+	FObjectInfo CurrentObject;
+	FName RowName;
+
+	UFUNCTION()
+	void Selected();
 };

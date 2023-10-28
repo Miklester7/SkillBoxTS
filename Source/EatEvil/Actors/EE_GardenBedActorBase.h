@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "EE_Types.h"
+#include "Actors/EE_DefaultPlaceInteractActor.h"
 #include "EE_GardenBedActorBase.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnTimerUpdated, float);
@@ -16,7 +17,7 @@ class UStaticMeshComponent;
 class UBoxComponent;
 
 UCLASS()
-class EATEVIL_API AEE_GardenBedActorBase : public AActor
+class EATEVIL_API AEE_GardenBedActorBase : public AEE_DefaultPlaceInteractActor
 {
 	GENERATED_BODY()
 	
@@ -29,6 +30,8 @@ public:
 
 	FVector GetInteractLocation() { return InteractLocations + GetActorLocation(); }
 	EGardenState GetCurrentStatus() { return GardenState; }
+
+	void SetNewPlant(const FObjectInfo& PlantInfo, const FName& RowName);
 protected:
 	virtual void BeginPlay() override;
 
@@ -86,7 +89,7 @@ private:
 	UPROPERTY()
 	TArray<TObjectPtr<AEE_PlantActor>> Plants;
 
-	FPlantsInfo CurrentPlantInfo; 
+	FObjectInfo CurrentPlantInfo; 
 
 	bool bIsClear{ true };
 
@@ -98,4 +101,6 @@ private:
 	EGardenState GardenState = EGardenState::Empty;
 private:
 	void UpdateStatus(EGardenState NewStatus);
+
+	virtual void Interact() override;
 };
