@@ -31,12 +31,20 @@ enum EObjectType : uint8
 	Potion
 };
 
+UENUM()
+enum EEffectType : uint8
+{
+	Power,
+	Health,
+
+};
+
 USTRUCT()
 struct FStorageObject
 {
 	GENERATED_BODY()
 
-	FStorageObject(FName InObjectRowName, int32 InQuantity, EObjectType InObjectType) : ObjectRowName(InObjectRowName), Quantity(InQuantity), ObjectType(InObjectType){};
+	FStorageObject(const FName& InObjectRowName, const int32& InQuantity,const EObjectType& InObjectType) : ObjectRowName(InObjectRowName), Quantity(InQuantity), ObjectType(InObjectType){};
 	FStorageObject() { };
 
 	FName ObjectRowName;
@@ -45,7 +53,46 @@ struct FStorageObject
 };
 
 USTRUCT(BlueprintType)
+struct FPotionRecipes
+{
+	GENERATED_BODY()
+
+	FName PotionName;
+	int32 Grade;
+};
+
+USTRUCT(BlueprintType)
+struct FPotionInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effect")
+	float EffectStrength{ 10.f };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Create")
+	int32 ResourcesNum{ 5 };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Game")
+	FText ObjectName;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Create")
+	FText ResourceName;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Game")
+	UTexture2D* Image;
+};
+
+USTRUCT(BlueprintType)
 struct FObjectInfo : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly,Category = "Info")
+	TArray<FPotionInfo> PotionInfo;
+};
+
+USTRUCT(BlueprintType)
+struct FPlantsInfo : public FTableRowBase
 {
 	GENERATED_BODY()
 

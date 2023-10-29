@@ -13,9 +13,21 @@ void UEE_GameInstance::Init()
 	UnblockedPlants.Add(FName("Test"));
 }
 
-bool UEE_GameInstance::GetPlantInfo(FName PlantName, FObjectInfo& OutInfo)
+bool UEE_GameInstance::GetPlantInfo(FName PlantName, FPlantsInfo& OutInfo)
 {
-	const auto Info = PlantsInfoTable->FindRow<FObjectInfo>(PlantName, "", false);
+	const auto Info = PlantsInfoTable->FindRow<FPlantsInfo>(PlantName, "", false);
+	if (Info)
+	{
+		OutInfo = *Info;
+		return true;
+	}
+
+	return false;
+}
+
+bool UEE_GameInstance::GetPotionInfo(FName PlantName, FObjectInfo& OutInfo)
+{
+	const auto Info = PotionsInfoTable->FindRow<FObjectInfo>(PlantName, "", false);
 	if (Info)
 	{
 		OutInfo = *Info;
@@ -49,4 +61,22 @@ void UEE_GameInstance::PutForStorage(const FStorageObject StorageObject)
 			UnblockedPlants.Add(StorageObject.ObjectRowName);
 		}
 	}
+}
+
+void UEE_GameInstance::UnlockRecipe(const FPotionRecipes& Recipe)
+{
+	UnlockedRecipes.Add(Recipe);
+}
+
+bool UEE_GameInstance::GetFromStorage(const FName& ObjectName, const int32 Num)
+{
+	const auto Index = ObjectsInStorage.IndexOfByPredicate([&](const FStorageObject& Object)
+		{
+			return Object.ObjectRowName == ObjectName;
+		});
+
+	if (Index == INDEX_NONE || ObjectsInStorage[Index].Quantity < Num) return false;
+
+	ObjectsInStorage[Index].Quantity -= Num;
+	return true;
 }

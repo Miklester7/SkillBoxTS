@@ -30,7 +30,7 @@ public:
 
 	EGardenState GetCurrentStatus() { return GardenState; }
 
-	void SetNewPlant(const FObjectInfo& PlantInfo, const FName& RowName);
+	void SetNewPlant(const FPlantsInfo& PlantInfo, const FName& RowName);
 protected:
 	virtual void BeginPlay() override;
 
@@ -85,7 +85,7 @@ private:
 	UPROPERTY()
 	TArray<TObjectPtr<AEE_PlantActor>> Plants;
 
-	FObjectInfo CurrentPlantInfo; 
+	FPlantsInfo CurrentPlantInfo; 
 
 	bool bIsClear{ true };
 

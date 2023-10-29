@@ -87,5 +87,5 @@ private:
 	UPROPERTY()
 	TObjectPtr<AEE_GardenBedActorBase> GardenBedActor;
 
-	void PlantWasSelected(const FObjectInfo& PlantInfo, const FName& RowName);
+	void PlantWasSelected(const FPlantsInfo& PlantInfo, const FName& RowName);
 };

@@ -16,7 +16,7 @@ void UEE_ObjectWidget::NativeOnInitialized()
 	SelectionButton->OnClicked.AddDynamic(this, &UEE_ObjectWidget::Selected);
 }
 
-void UEE_ObjectWidget::SetObject(const FObjectInfo& ObjectInfo, const FName& InRowName)
+void UEE_ObjectWidget::SetObject(const FPlantsInfo& ObjectInfo, const FName& InRowName)
 {
 	CurrentObject = ObjectInfo;
 	ObjectName->SetText(ObjectInfo.PlantName);

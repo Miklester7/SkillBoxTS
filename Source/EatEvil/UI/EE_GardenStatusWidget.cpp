@@ -90,7 +90,7 @@ void UEE_GardenStatusWidget::OnActionButtonClicked()
 				UEE_ObjectWidget* ObjectWidget = CreateWidget<UEE_ObjectWidget>(this, ObjectWidgetClass);
 				if (ObjectWidget)
 				{
-					FObjectInfo Info;
+					FPlantsInfo Info;
 					if (GI->GetPlantInfo(Plant, Info)) ObjectWidget->SetObject(Info, Plant);
 					ObjectsBox->AddChild(ObjectWidget);
 					ObjectWidgets.Add(ObjectWidget);
@@ -129,7 +129,7 @@ void UEE_GardenStatusWidget::ClearObjectWidgets()
 	ObjectWidgets.Empty();
 }
 
-void UEE_GardenStatusWidget::PlantWasSelected(const FObjectInfo& PlantInfo, const FName& RowName)
+void UEE_GardenStatusWidget::PlantWasSelected(const FPlantsInfo& PlantInfo, const FName& RowName)
 {
 	if (GardenBedActor)
 	{

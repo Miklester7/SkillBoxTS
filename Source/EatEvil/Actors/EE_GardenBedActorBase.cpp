@@ -32,7 +32,7 @@ AEE_GardenBedActorBase::AEE_GardenBedActorBase()
 	InteractZoneCollision->SetupAttachment(SceneComponent);
 }
 
-void AEE_GardenBedActorBase::SetNewPlant(const FObjectInfo& PlantInfo, const FName& RowName)
+void AEE_GardenBedActorBase::SetNewPlant(const FPlantsInfo& PlantInfo, const FName& RowName)
 {
 	CurrentPlantInfo = PlantInfo;
 	PlantRow = RowName;

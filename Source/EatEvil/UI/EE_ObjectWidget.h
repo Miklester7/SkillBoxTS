@@ -7,7 +7,7 @@
 #include "EE_Types.h"
 #include "EE_ObjectWidget.generated.h"
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnWasSelected, const FObjectInfo&,const FName&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnWasSelected, const FPlantsInfo&,const FName&);
 
 class UTextBlock;
 class UImage;
@@ -29,11 +29,11 @@ protected:
 	UPROPERTY(meta =(BindWidget))
 	UButton* SelectionButton;
 public:
-	void SetObject(const FObjectInfo& ObjectInfo,const FName& RowName);
+	void SetObject(const FPlantsInfo& ObjectInfo,const FName& RowName);
 
 	FOnWasSelected OnWasSelected;
 private:
-	FObjectInfo CurrentObject;
+	FPlantsInfo CurrentObject;
 	FName RowName;
 
 	UFUNCTION()
