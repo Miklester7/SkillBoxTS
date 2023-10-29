@@ -20,6 +20,7 @@ enum EActionType : uint8
 {
 	Take,
 	Put,
+	PutInStorage,
 
 };
 

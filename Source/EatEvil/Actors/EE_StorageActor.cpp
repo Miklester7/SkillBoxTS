@@ -24,6 +24,11 @@ AEE_StorageActor::AEE_StorageActor()
 	StaticMeshComponent->SetupAttachment(SceneComponent);
 }
 
+void AEE_StorageActor::Interact()
+{
+	Super::Interact();
+}
+
 void AEE_StorageActor::BeginPlay()
 {
 	Super::BeginPlay();
@@ -33,6 +38,7 @@ void AEE_StorageActor::BeginPlay()
 	BoxCollision->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	BoxCollision->OnBeginCursorOver.AddDynamic(this, &ThisClass::OnCursorOver);
 	BoxCollision->OnEndCursorOver.AddDynamic(this, &ThisClass::OnEngCursorOver);
+	BoxCollision->OnClicked.AddDynamic(this, &ThisClass::OnCLiked);
 }
 
 void AEE_StorageActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -47,7 +53,7 @@ void AEE_StorageActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 			
 			if(!DraggingComponent->PutObject(CurrentObject)) return;
 
-			DraggingComponent->CanInteract(EActionType::Put, [&]() { return PutForStorage(); });
+			DraggingComponent->CanInteract(EActionType::PutInStorage, [&]() { return PutForStorage(); });
 			DraggingComponent->ClearObject();
 		}
 	}
@@ -71,4 +77,9 @@ void AEE_StorageActor::PutForStorage()
 		GI->PutForStorage(CurrentObject);
 		CurrentObject.ObjectRowName = NAME_None;
 	}
+}
+
+void AEE_StorageActor::OnCLiked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed)
+{
+	Interact();
 }

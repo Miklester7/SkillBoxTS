@@ -21,6 +21,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
 	UBehaviorTree* BehaviorTreeAsset;
+
+	bool IsAnimationPlaying() { return bIsAnimationPlaying; }
 protected:
 
 	virtual void BeginPlay() override;
@@ -32,6 +34,9 @@ protected:
 	//SecondType
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Animation")
 	UAnimMontage* PutAnimMontage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Animation")
+	UAnimMontage* PutInStorageAnimMontage;
 
 	//FirstType
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Animation")
@@ -50,6 +55,9 @@ private:
 	void PlayInteractAnim(EActionType Type);
 
 	void Action();
+	void PutInStorage();
 
 	void AttachComponents();
+
+	bool bIsAnimationPlaying{ false };
 };

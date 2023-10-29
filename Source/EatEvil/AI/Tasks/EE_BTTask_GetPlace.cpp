@@ -3,11 +3,11 @@
 
 #include "AI/Tasks/EE_BTTask_GetPlace.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Actors/EE_GardenBedActorBase.h"
+#include "Actors/EE_DefaultPlaceInteractActor.h"
 
 UEE_BTTask_GetPlace::UEE_BTTask_GetPlace()
 {
-	NodeName = "GetGardenLocation";
+	NodeName = "GetInteractLocation";
 }
 
 EBTNodeResult::Type UEE_BTTask_GetPlace::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -16,10 +16,10 @@ EBTNodeResult::Type UEE_BTTask_GetPlace::ExecuteTask(UBehaviorTreeComponent& Own
 	const auto Actor = BlackBoard->GetValueAsObject(InteractActorKey.SelectedKeyName);
 	if (Actor)
 	{
-		const auto GardenActor = Cast<AEE_GardenBedActorBase>(Actor);
-		if (GardenActor)
+		const auto InteractActor = Cast<AEE_DefaultPlaceInteractActor>(Actor);
+		if (InteractActor)
 		{
-			BlackBoard->SetValueAsVector(PlaceLocKey.SelectedKeyName, GardenActor->GetInteractLocation());
+			BlackBoard->SetValueAsVector(PlaceLocKey.SelectedKeyName, InteractActor->GetInteractLocation());
 			return EBTNodeResult::Succeeded;
 		}
 		return EBTNodeResult::Failed;

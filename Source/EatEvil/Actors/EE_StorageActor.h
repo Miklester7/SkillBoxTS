@@ -5,19 +5,20 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "EE_Types.h"
+#include "Actors/EE_DefaultPlaceInteractActor.h"
 #include "EE_StorageActor.generated.h"
 
 class UBoxComponent;
 class UStaticMeshComponent;
 
 UCLASS()
-class EATEVIL_API AEE_StorageActor : public AActor
+class EATEVIL_API AEE_StorageActor : public AEE_DefaultPlaceInteractActor
 {
 	GENERATED_BODY()
 	
 public:	
 	AEE_StorageActor();
-
+	virtual void Interact() override;
 protected:
 	virtual void BeginPlay() override;
 
@@ -30,9 +31,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Components")
 	USceneComponent* SceneComponent;
-
-	UPROPERTY(EditAnywhere, Category = "Locations", meta = (MakeEditWidget = true))
-	FVector InteractLocations;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* StaticMeshComponent;
@@ -51,4 +49,8 @@ private:
 	void PutForStorage();
 
 	FStorageObject CurrentObject;
+
+	UFUNCTION()
+	void OnCLiked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);
+
 };

@@ -29,6 +29,8 @@ public:
 	FOnPutObject OnPutObject;
 	FOnReadyToInteract OnReadyToInteract;
 
+	bool IsEmployed() { return bIsEmployed; }
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -36,4 +38,6 @@ private:
 	TFunction<void()> ExecutableFunc;
 
 	FStorageObject CurrentObject;
+
+	bool bIsEmployed{ false };
 };

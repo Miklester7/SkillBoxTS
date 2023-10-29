@@ -18,6 +18,7 @@ void UEE_DraggingComponent::TakeObject(const FStorageObject StorageObject, const
 {
 	CurrentObject = StorageObject;
 	OnTakeObject.Broadcast(StorageObject.ObjectRowName, ObjectGameName, Image);
+	bIsEmployed = true;
 }
 
 bool UEE_DraggingComponent::PutObject(FStorageObject& StorageObject)
@@ -26,6 +27,7 @@ bool UEE_DraggingComponent::PutObject(FStorageObject& StorageObject)
 	{
 		OnPutObject.Broadcast(StorageObject.ObjectRowName);
 		StorageObject = CurrentObject;
+		bIsEmployed = false;
 
 		return true;
 	}

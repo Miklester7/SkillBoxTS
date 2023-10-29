@@ -28,7 +28,6 @@ public:
 
 	bool CanInteract() { return bCanInteract; }
 
-	FVector GetInteractLocation() { return InteractLocations + GetActorLocation(); }
 	EGardenState GetCurrentStatus() { return GardenState; }
 
 	void SetNewPlant(const FObjectInfo& PlantInfo, const FName& RowName);
@@ -82,9 +81,6 @@ protected:
 private:
 	UPROPERTY(EditAnywhere,Category = "Locations", meta = (MakeEditWidget = true))
 	TArray<FVector> SpawnMeshLocations;
-
-	UPROPERTY(EditAnywhere, Category = "Locations", meta = (MakeEditWidget = true))
-	FVector InteractLocations;
 
 	UPROPERTY()
 	TArray<TObjectPtr<AEE_PlantActor>> Plants;

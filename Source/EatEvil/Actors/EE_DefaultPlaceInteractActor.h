@@ -21,9 +21,14 @@ public:
 	void SetAIVisible(bool bIsVisible);
 
 	bool GetAIVisible() { return bIsVisible; }
+	FVector GetInteractLocation() { return InteractLocations + GetActorLocation(); }
+
 	virtual void Interact();
 protected:
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, Category = "Locations", meta = (MakeEditWidget = true))
+	FVector InteractLocations;
 
 private:
 	bool bIsVisible{ false };

@@ -166,34 +166,28 @@ void AEE_GardenBedActorBase::GetContent()
 void AEE_GardenBedActorBase::InteractZoneOverlaped(UPrimitiveComponent* OverlappedComponent,
 	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	const auto Component = OtherActor->GetComponentByClass(UEE_DraggingComponent::StaticClass());
+	if (!Component) return;
+
+	const auto DraggingComponent = Cast<UEE_DraggingComponent>(Component);
+	if (!DraggingComponent) return;
+
+	if (DraggingComponent->IsEmployed()) return;
+
 	switch (GardenState)
 	{
 	case Empty:
-	{const auto Component = OtherActor->GetComponentByClass(UEE_DraggingComponent::StaticClass());
-	if (Component)
-	{
-		const auto DraggingComponent = Cast<UEE_DraggingComponent>(Component);
-		if (DraggingComponent)
-		{
-			DraggingComponent->CanInteract(EActionType::Put, [&]() {return SetPlant(); });
-		}
-	}}
+		DraggingComponent->CanInteract(EActionType::Put, [&]() {return SetPlant(); });
 		break;
 	case Waiting:
 		return;
 		break;
 	case Completed:
-	{const auto Component = OtherActor->GetComponentByClass(UEE_DraggingComponent::StaticClass());
-	if (Component)
 	{
-		const auto DraggingComponent = Cast<UEE_DraggingComponent>(Component);
-		if (DraggingComponent)
-		{
-			const FStorageObject ObjectType(PlantRow, Plants.Num(), EObjectType::Plant);
-			DraggingComponent->TakeObject(ObjectType,CurrentPlantInfo.PlantName, CurrentPlantInfo.Image);
-			DraggingComponent->CanInteract(EActionType::Take, [&]() {return GetContent(); });
-		}
-	}}
+		const FStorageObject ObjectType(PlantRow, Plants.Num(), EObjectType::Plant);
+		DraggingComponent->TakeObject(ObjectType, CurrentPlantInfo.PlantName, CurrentPlantInfo.Image);
+		DraggingComponent->CanInteract(EActionType::Take, [&]() {return GetContent(); });
+	}
 		break;
 	default:
 		break;
@@ -215,6 +209,7 @@ void AEE_GardenBedActorBase::UpdateStatus(EGardenState NewStatus)
 
 	if (GardenState == EGardenState::Empty)
 	{
+		bIsClear = true;
 		PlantRow = NAME_None;
 		for (const auto Plant : Plants)
 		{
