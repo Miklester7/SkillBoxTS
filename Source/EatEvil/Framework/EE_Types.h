@@ -28,7 +28,8 @@ UENUM()
 enum EObjectType : uint8
 {
 	Plant,
-	Potion
+	Potion,
+	Weapon
 };
 
 UENUM()
@@ -71,6 +72,12 @@ struct FPotionInfo
 
 	UPROPERTY(EditDefaultsOnly, Category = "Effect")
 	float EffectStrength{ 10.f };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Create")
+	FText Description;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Create")
+	int32 NumberOfUses{ 1 };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Create")
 	int32 ResourcesNum{ 5 };
