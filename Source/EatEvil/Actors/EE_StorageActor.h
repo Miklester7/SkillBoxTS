@@ -53,4 +53,5 @@ private:
 	UFUNCTION()
 	void OnCLiked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);
 
+	virtual void PlayerInteracted() override;
 };

@@ -98,6 +98,7 @@ void UEE_GardenStatusWidget::OnActionButtonClicked()
 
 					auto AsSlot = UWidgetLayoutLibrary::SlotAsScrollBoxSlot(ObjectWidget);
 					if (AsSlot) AsSlot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);
+					OnActionAnyClicked.Broadcast();
 				}
 			}
 		}
@@ -107,6 +108,7 @@ void UEE_GardenStatusWidget::OnActionButtonClicked()
 		break;
 	case Completed:
 		GetContentDelegate.Broadcast();
+		OnActionAnyClicked.Broadcast();
 		break;
 	default:
 		break;

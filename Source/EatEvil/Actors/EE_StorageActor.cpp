@@ -82,4 +82,10 @@ void AEE_StorageActor::PutForStorage()
 void AEE_StorageActor::OnCLiked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed)
 {
 	Interact();
+	PlayerInteracted();
+}
+
+void AEE_StorageActor::PlayerInteracted()
+{
+	Super::PlayerInteracted();
 }

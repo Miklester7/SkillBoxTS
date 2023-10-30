@@ -19,6 +19,15 @@ void AEE_DefaultPlaceInteractActor::Interact()
 	OnGoToActor.Broadcast(this);
 }
 
+void AEE_DefaultPlaceInteractActor::PlayerInteracted()
+{
+	auto PlController = GetWorld()->GetFirstPlayerController<AEE_PlayerController>();
+	if (PlController)
+	{
+		PlController->SetAFKPlayer(false);
+	}
+}
+
 void AEE_DefaultPlaceInteractActor::BeginPlay()
 {
 	Super::BeginPlay();

@@ -18,6 +18,10 @@ public:
 	AEE_PlayerController();
 
 	void AddPlaceInteractActor(AEE_DefaultPlaceInteractActor* Actor);
+
+	bool GetAFKPlayer() { return AFKPlayer; }
+
+	void SetAFKPlayer(bool Value) { AFKPlayer = Value; }
 protected:
 	virtual void BeginPlay();
 
@@ -26,6 +30,11 @@ private:
 	TObjectPtr<AEE_DefaultPlaceInteractActor> LastPlaceInteractActor;
 
 	void TargetUpdate(AEE_DefaultPlaceInteractActor* Actor);
+
+	bool AFKPlayer{ false };
+	FTimerHandle RunSequenceTimer;
+
+	void RunSequence();
 };
 
 

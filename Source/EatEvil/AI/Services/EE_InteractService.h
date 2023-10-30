@@ -15,11 +15,8 @@ public:
 	UEE_InteractService();
 
 protected:
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "AI")
-	FBlackboardKeySelector PlaceLocKey;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	FBlackboardKeySelector InteractActorKey;
+	FBlackboardKeySelector RunSequenceActorKey;
 
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 };

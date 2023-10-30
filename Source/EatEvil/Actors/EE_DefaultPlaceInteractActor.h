@@ -24,6 +24,8 @@ public:
 	FVector GetInteractLocation() { return InteractLocations + GetActorLocation(); }
 
 	virtual void Interact();
+
+	virtual void PlayerInteracted();
 protected:
 	virtual void BeginPlay() override;
 

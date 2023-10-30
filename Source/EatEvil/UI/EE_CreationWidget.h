@@ -47,6 +47,9 @@ protected:
 	UTextBlock* SecondTypeName;
 
 	UPROPERTY(meta = (BindWidget))
+	UTextBlock* ResurceNum;
+
+	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ThirdTypeName;
 
 	UPROPERTY(meta = (BindWidget))
@@ -102,4 +105,6 @@ private:
 	float CurrentTime{ 0.f };
 	void TimerUpdated();
 	void SetToStorage();
+
+	void UpdateResourceSlot();
 };

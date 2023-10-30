@@ -10,7 +10,7 @@ void UEE_GameInstance::Init()
 	Super::Init();
 
 	check(PlantsInfoTable);
-	UnblockedPlants.Add(FName("Test"));
+	UnblockedPlants.Add(FName("Turnip"));
 }
 
 bool UEE_GameInstance::GetPlantInfo(FName PlantName, FPlantsInfo& OutInfo)
@@ -79,4 +79,9 @@ bool UEE_GameInstance::GetFromStorage(const FName& ObjectName, const int32 Num)
 
 	ObjectsInStorage[Index].Quantity -= Num;
 	return true;
+}
+
+void UEE_GameInstance::SetMoney(const int32 Value)
+{
+	Money += Value;
 }

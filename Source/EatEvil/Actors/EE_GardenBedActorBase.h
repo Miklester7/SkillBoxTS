@@ -41,7 +41,7 @@ protected:
 	void OnEndCursorOver(UPrimitiveComponent* TouchedComponent);
 
 	UFUNCTION()
-	void OnMouseReleased(UPrimitiveComponent* TouchedComponent, FKey ButtonReleased);
+	virtual void OnMouseReleased(UPrimitiveComponent* TouchedComponent, FKey ButtonReleased);
 
 	void SetPlant();
 
@@ -52,8 +52,10 @@ protected:
 	void GetContent();
 
 	UFUNCTION()
-	void InteractZoneOverlaped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	virtual void InteractZoneOverlaped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	virtual void InitWidget();
 protected:
 	UPROPERTY(EditAnywhere,Category = "Components")
 	USceneComponent* SceneComponent;
@@ -78,6 +80,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,Category = "Content")
 	TSubclassOf<AEE_PlantActor> PlantActorClass;
+
+	bool bCanInteract{ true };
 private:
 	UPROPERTY(EditAnywhere,Category = "Locations", meta = (MakeEditWidget = true))
 	TArray<FVector> SpawnMeshLocations;
@@ -92,11 +96,11 @@ private:
 	FTimerHandle GrowthRateTimer;
 	float CurrentTime{ 0.f };
 
-	bool bCanInteract{ true };
-
 	EGardenState GardenState = EGardenState::Empty;
 private:
 	void UpdateStatus(EGardenState NewStatus);
 
 	virtual void Interact() override;
+
+	virtual void PlayerInteracted() override;
 };

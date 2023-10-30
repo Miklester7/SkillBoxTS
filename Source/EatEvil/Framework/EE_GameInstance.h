@@ -25,6 +25,9 @@ public:
 	const TArray<FName>& GetUnblockedPlants() { return UnblockedPlants; }
 
 	bool GetFromStorage(const FName& ObjectName,const int32 Num);
+
+	void SetMoney(const int32 Value);
+	const int32 GetMoney() { return Money; }
 protected:
 	virtual void Init() override;
 
@@ -37,5 +40,9 @@ protected:
 
 	TArray<FStorageObject> ObjectsInStorage;
 	TArray<FName> UnblockedPlants;
+
+	UPROPERTY(EditDefaultsOnly,Category = "Game")
 	TArray<FPotionRecipes> UnlockedRecipes;
+
+	int32 Money{ 2000 };
 };

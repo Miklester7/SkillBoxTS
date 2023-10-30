@@ -9,6 +9,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/EE_DraggingComponent.h"
+#include "EE_PlayerController.h"
 
 DEFINE_LOG_CATEGORY_STATIC(AEE_GardenBedActorBaseLog, All, All);
 
@@ -46,18 +47,7 @@ void AEE_GardenBedActorBase::BeginPlay()
 	check(PlantActorClass);
 	check(GardenStatusWidgetClass);
 
-	InteractWidget->SetWidgetClass(GardenStatusWidgetClass);
-	const auto StatusWidget = Cast<UEE_GardenStatusWidget>(InteractWidget->GetWidget());
-	if (StatusWidget)
-	{
-		StatusWidget->InitWidget(this);
-		StatusWidget->OnWidgetHide.AddUObject(this, &ThisClass::HideWidget);
-		StatusWidget->SetOwningActors(this);
-		StatusWidget->GetContentDelegate.AddUObject(this, &ThisClass::Interact);
-		//StatusWidget->GetContentDelegate.AddUObject(this, &ThisClass::GetContent);
-	}
-	InteractWidget->SetHiddenInGame(true);
-
+	InitWidget();
 
 	BoxCollision->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	BoxCollision->OnBeginCursorOver.AddDynamic(this, &ThisClass::OnCursorOver);
@@ -75,9 +65,24 @@ void AEE_GardenBedActorBase::BeginPlay()
 	}
 }
 
+void AEE_GardenBedActorBase::InitWidget()
+{
+	InteractWidget->SetWidgetClass(GardenStatusWidgetClass);
+	const auto StatusWidget = Cast<UEE_GardenStatusWidget>(InteractWidget->GetWidget());
+	if (StatusWidget)
+	{
+		StatusWidget->InitWidget(this);
+		StatusWidget->OnWidgetHide.AddUObject(this, &ThisClass::HideWidget);
+		StatusWidget->SetOwningActors(this);
+		StatusWidget->GetContentDelegate.AddUObject(this, &ThisClass::Interact);
+		StatusWidget->OnActionAnyClicked.AddUObject(this, &ThisClass::PlayerInteracted);
+		//StatusWidget->GetContentDelegate.AddUObject(this, &ThisClass::GetContent);
+	}
+	InteractWidget->SetHiddenInGame(true);
+}
+
 void AEE_GardenBedActorBase::OnCursorOver(UPrimitiveComponent* TouchedComponent)
 {
-	UE_LOG(AEE_GardenBedActorBaseLog, Warning, TEXT("OnBeginCursorOver"));
 	StaticMeshComponent->SetCustomDepthStencilValue(4);
 }
 
@@ -177,7 +182,26 @@ void AEE_GardenBedActorBase::InteractZoneOverlaped(UPrimitiveComponent* Overlapp
 	switch (GardenState)
 	{
 	case Empty:
+	{
+		const auto PController = GetWorld()->GetFirstPlayerController<AEE_PlayerController>();
+		if (PController)
+		{
+			//Получение случайного растения из доступных(при автоматическом управлении)
+			if (PController->GetAFKPlayer())
+			{
+				const auto GI = GetGameInstance<UEE_GameInstance>();
+				if (GI)
+				{
+					const auto PlantNames = GI->GetUnblockedPlants();
+					const FName RowName = PlantNames[FMath::RandHelper(Plants.Num())];
+					FPlantsInfo Info;
+
+					if (GI->GetPlantInfo(RowName, Info)) SetNewPlant(Info, RowName);
+				}
+			}
+		}
 		DraggingComponent->CanInteract(EActionType::Put, [&]() {return SetPlant(); });
+	}
 		break;
 	case Waiting:
 		return;
@@ -222,4 +246,9 @@ void AEE_GardenBedActorBase::UpdateStatus(EGardenState NewStatus)
 void AEE_GardenBedActorBase::Interact()
 {
 	Super::Interact();
+}
+
+void AEE_GardenBedActorBase::PlayerInteracted()
+{
+	Super::PlayerInteracted();
 }

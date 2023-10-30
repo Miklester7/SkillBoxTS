@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "UI/EE_CreationWidget.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
@@ -49,6 +48,7 @@ void UEE_CreationWidget::InitWidget(const FName& RowName)
 					FirstTypeImage->SetBrushFromTexture(CurrentObjectInfo.PotionInfo[i].Image);
 					FirstTypeName->SetText(CurrentObjectInfo.PotionInfo[i].ObjectName);
 					FirstTypeButton->bIsEnabled = true;
+					CurrentIndex = 0;
 					break;
 
 				case 1:
@@ -66,6 +66,7 @@ void UEE_CreationWidget::InitWidget(const FName& RowName)
 				}
 			}
 		}
+		SelectedFirstType();
 		ActionStatusName->SetText(FText::FromString("Create"));
 	}
 }
@@ -89,7 +90,7 @@ void UEE_CreationWidget::NativeOnInitialized()
 	ThirdTypeButton->OnClicked.AddDynamic(this, &UEE_CreationWidget::SelectedThirdType);
 
 	SelectButton->OnClicked.AddDynamic(this, &UEE_CreationWidget::SelectType);
-	ObjectTypesBox->SetVisibility(ESlateVisibility::HitTestInvisible);
+	ObjectTypesBox->SetVisibility(ESlateVisibility::Collapsed);
 
 	StartCreateButton->OnClicked.AddDynamic(this, &UEE_CreationWidget::CreateObject);
 }
@@ -100,7 +101,9 @@ void UEE_CreationWidget::SelectedFirstType()
 	CurrentIndex = Index;
 	SelectedObjectImage->SetBrushFromTexture(CurrentObjectInfo.PotionInfo[Index].Image);
 	SelectedObjectName->SetText(CurrentObjectInfo.PotionInfo[Index].ObjectName);
-	ObjectTypesBox->SetVisibility(ESlateVisibility::HitTestInvisible);
+	ObjectTypesBox->SetVisibility(ESlateVisibility::Collapsed);
+
+	UpdateResourceSlot();
 }
 
 void UEE_CreationWidget::SelectedSecondType()
@@ -109,7 +112,9 @@ void UEE_CreationWidget::SelectedSecondType()
 	CurrentIndex = Index;
 	SelectedObjectImage->SetBrushFromTexture(CurrentObjectInfo.PotionInfo[Index].Image);
 	SelectedObjectName->SetText(CurrentObjectInfo.PotionInfo[Index].ObjectName);
-	ObjectTypesBox->SetVisibility(ESlateVisibility::HitTestInvisible);
+	ObjectTypesBox->SetVisibility(ESlateVisibility::Collapsed);
+
+	UpdateResourceSlot();
 }
 
 void UEE_CreationWidget::SelectedThirdType()
@@ -118,7 +123,9 @@ void UEE_CreationWidget::SelectedThirdType()
 	CurrentIndex = Index;
 	SelectedObjectImage->SetBrushFromTexture(CurrentObjectInfo.PotionInfo[Index].Image);
 	SelectedObjectName->SetText(CurrentObjectInfo.PotionInfo[Index].ObjectName);
-	ObjectTypesBox->SetVisibility(ESlateVisibility::HitTestInvisible);
+	ObjectTypesBox->SetVisibility(ESlateVisibility::Collapsed);
+
+	UpdateResourceSlot();
 }
 
 void UEE_CreationWidget::SelectType()
@@ -131,22 +138,30 @@ void UEE_CreationWidget::CreateObject()
 	const auto GI = GetGameInstance<UEE_GameInstance>();
 	if (GI)
 	{
-		if (GI->GetFromStorage(ObjectRowName, CurrentObjectInfo.PotionInfo[CurrentIndex].ResourcesNum))
+		if (GI->GetFromStorage(CurrentObjectInfo.PotionInfo[CurrentIndex].ResourceRowName, CurrentObjectInfo.PotionInfo[CurrentIndex].ResourcesNum))
 		{
-			GetWorld()->GetTimerManager().SetTimer(CreateTimer, this, &UEE_CreationWidget::TimerUpdated, 0.25f, true);
-			StartCreateButton->bIsEnabled = false;
+			if(!GetWorld()->GetTimerManager().IsTimerActive(CreateTimer))
+			{
+				GetWorld()->GetTimerManager().SetTimer(CreateTimer, this, &UEE_CreationWidget::TimerUpdated, 0.25f, true);
+				ActionStatusName->SetText(FText::FromString(FString::Printf(TEXT("%02.0f%%"), (CurrentTime / CreateTime) * 100.f)));
+				StartCreateButton->bIsEnabled = false;
+			}
 		}
 	}
 }
 
 void UEE_CreationWidget::TimerUpdated()
 {
-	CurrentTime = FMath::Max(CurrentTime + 0.25f, CreateTime);
-	ActionStatusName->SetText(FText::FromString(FString::Printf(TEXT("%02.0f%%"), CurrentTime/ CreateTime * 100.f)));
+	CurrentTime = FMath::Clamp(CurrentTime + 0.25f, 0.f, CreateTime);
+	const float Percent = CurrentTime / CreateTime;
+	ActionStatusName->SetText(FText::FromString(FString::Printf(TEXT("%02.0f%%"), (Percent) * 100.f)));
+	CreateProgressBar->SetPercent(Percent);
 
 	if (CurrentTime == CreateTime)
 	{
 		GetWorld()->GetTimerManager().ClearTimer(CreateTimer);
+		CurrentTime = 0.f;
+		CreateProgressBar->SetPercent(0.f);
 		SetToStorage();
 		StartCreateButton->bIsEnabled = true;
 		ActionStatusName->SetText(FText::FromString("Create"));
@@ -160,5 +175,20 @@ void UEE_CreationWidget::SetToStorage()
 	{
 		const FStorageObject Object(ObjectRowName, 1, EObjectType::Potion);
 		GI->PutForStorage(Object);
+	}
+}
+
+void UEE_CreationWidget::UpdateResourceSlot()
+{
+	const auto GI = GetGameInstance<UEE_GameInstance>();
+	if (GI)
+	{
+		FPlantsInfo Info;
+		if (GI->GetPlantInfo(CurrentObjectInfo.PotionInfo[CurrentIndex].ResourceRowName, Info))
+		{
+			ResourceImage->SetBrushFromTexture(Info.Image);
+		}
+
+		ResurceNum->SetText(FText::FromString(FString::FromInt(CurrentObjectInfo.PotionInfo[CurrentIndex].ResourcesNum)));
 	}
 }

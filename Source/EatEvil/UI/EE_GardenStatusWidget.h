@@ -17,6 +17,7 @@ class AEE_GardenBedActorBase;
 
 DECLARE_MULTICAST_DELEGATE(FOnWidgetHide);
 DECLARE_MULTICAST_DELEGATE(FGetContent);
+DECLARE_MULTICAST_DELEGATE(FOnActionAnyClicked);
 
 UCLASS()
 class EATEVIL_API UEE_GardenStatusWidget : public UUserWidget
@@ -34,6 +35,7 @@ public:
 
 	FOnWidgetHide OnWidgetHide;
 	FGetContent GetContentDelegate;
+	FOnActionAnyClicked OnActionAnyClicked;
 protected:
 	virtual void NativeOnInitialized() override;
 	

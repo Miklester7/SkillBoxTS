@@ -3,24 +3,28 @@
 
 #include "AI/Services/EE_InteractService.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Actors/EE_GardenBedActorBase.h"
+#include "EE_PlayerController.h"
 
 UEE_InteractService::UEE_InteractService()
 {
-	NodeName = "GetPlace";
+	NodeName = "CheckAFK";
 }
 
 void UEE_InteractService::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	const auto BlackBoard = OwnerComp.GetBlackboardComponent();
-	const auto Actor = BlackBoard->GetValueAsObject(InteractActorKey.SelectedKeyName);
-	if (Actor)
+	const auto PController = GetWorld()->GetFirstPlayerController<AEE_PlayerController>();
+	if (PController)
 	{
-		const auto GardenActor = Cast<AEE_GardenBedActorBase>(Actor);
-		if (GardenActor)
+		if (PController->GetAFKPlayer())
 		{
-			BlackBoard->SetValueAsVector(PlaceLocKey.SelectedKeyName, GardenActor->GetInteractLocation());
+			BlackBoard->SetValueAsBool(RunSequenceActorKey.SelectedKeyName, true);
+		}
+		else
+		{
+			BlackBoard->SetValueAsBool(RunSequenceActorKey.SelectedKeyName, false);
 		}
 	}
+
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 }

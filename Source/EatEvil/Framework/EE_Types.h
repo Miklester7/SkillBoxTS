@@ -57,7 +57,10 @@ struct FPotionRecipes
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditDefaultsOnly,Category = "Name")
 	FName PotionName;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Grade")
 	int32 Grade;
 };
 
@@ -77,6 +80,9 @@ struct FPotionInfo
 
 	UPROPERTY(EditDefaultsOnly, Category = "Create")
 	FText ResourceName;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Create")
+	FName ResourceRowName;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Game")
 	UTexture2D* Image;
