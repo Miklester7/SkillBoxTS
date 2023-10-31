@@ -11,6 +11,8 @@ void UEE_GameInstance::Init()
 
 	check(PlantsInfoTable);
 	UnblockedPlants.Add(FName("Turnip"));
+	UnblockedPlants.Add(FName("Onion"));
+	UnblockedPlants.Add(FName("Radish"));
 }
 
 bool UEE_GameInstance::GetPlantInfo(FName PlantName, FPlantsInfo& OutInfo)
@@ -60,6 +62,35 @@ void UEE_GameInstance::PutForStorage(const FStorageObject StorageObject)
 		{
 			UnblockedPlants.Add(StorageObject.ObjectRowName);
 		}
+
+		OnStorageUpdated.Broadcast();
+	}
+}
+
+void UEE_GameInstance::PutForShop(const FStorageObject StorageObject)
+{
+	if (StorageObject.ObjectRowName != NAME_None)
+	{
+		const auto Index = ObjectsInShop.IndexOfByPredicate([&](const FStorageObject& Object) {
+
+			return Object.ObjectRowName == StorageObject.ObjectRowName;
+			});
+
+		if (Index == INDEX_NONE)
+		{
+			ObjectsInShop.Add(StorageObject);
+		}
+		else
+		{
+			ObjectsInShop[Index].Quantity += StorageObject.Quantity;
+			UE_LOG(UEE_GameInstanceLog, Warning, TEXT("ObjectsInShop: Name.%s,Quantity.%i "), *ObjectsInShop[Index].ObjectRowName.ToString(), ObjectsInShop[Index].Quantity);
+		}
+
+		if (!UnblockedPlants.Contains(StorageObject.ObjectRowName))
+		{
+			UnblockedPlants.Add(StorageObject.ObjectRowName);
+		}
+		OnShopUpdated.Broadcast();
 	}
 }
 
@@ -78,10 +109,40 @@ bool UEE_GameInstance::GetFromStorage(const FName& ObjectName, const int32 Num)
 	if (Index == INDEX_NONE || ObjectsInStorage[Index].Quantity < Num) return false;
 
 	ObjectsInStorage[Index].Quantity -= Num;
+	OnStorageUpdated.Broadcast();
+
 	return true;
 }
 
 void UEE_GameInstance::SetMoney(const int32 Value)
 {
-	Money += Value;
+	Money = FMath::Clamp(Money + Value, 0, INT32_MAX);
+	OnMoneyUpdated.Broadcast(Money);
+}
+
+void UEE_GameInstance::SendToShop(const FName& RowName, const int32 Grade)
+{
+	int8 Index;
+
+	if(Grade >= 0)
+	{
+		Index = ObjectsInStorage.IndexOfByPredicate([&](const FStorageObject& Object)
+			{
+				return Object.ObjectRowName == RowName;
+			});
+	}
+	else
+	{
+		Index = ObjectsInStorage.IndexOfByPredicate([&](const FStorageObject& Object)
+			{
+				return Object.ObjectRowName == RowName && Object.Grade == Grade;
+			});
+	}
+
+	if (Index != INDEX_NONE)
+	{
+		PutForShop(ObjectsInStorage[Index]);
+		ObjectsInStorage[Index].Quantity = 0;
+	}
+
 }

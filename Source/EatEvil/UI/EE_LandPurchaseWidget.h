@@ -40,7 +40,7 @@ private:
 
 	UFUNCTION()
 	void Buy();
-	bool CanBuy();
+	void CanBuy(const int32 Value);
 
 	UFUNCTION()
 	void HideWidget();

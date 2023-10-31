@@ -18,7 +18,12 @@ void UEE_LandPurchaseWidget::NativeOnInitialized()
 
 void UEE_LandPurchaseWidget::InitWidget(const int32 InCost)
 {
-	CanBuy();
+	const auto GI = GetGameInstance<UEE_GameInstance>();
+	if (GI)
+	{
+		GI->OnMoneyUpdated.AddUObject(this, &UEE_LandPurchaseWidget::CanBuy);
+	}
+	CanBuy(0);
 
 	if(CostText)
 	{
@@ -37,17 +42,16 @@ void UEE_LandPurchaseWidget::Buy()
 	}
 }
 
-bool UEE_LandPurchaseWidget::CanBuy()
+void UEE_LandPurchaseWidget::CanBuy(const int32 Value)
 {
 	const auto GI = GetGameInstance<UEE_GameInstance>();
 	if (GI)
 	{
-		if (GI->GetMoney() >= Cost)
+		if (GI->GetMoney() < Cost)
 		{
-			BuyButton->bIsEnabled = false;
+			BuyButton->SetIsEnabled(false);
 		}
 	}
-	return false;
 }
 
 void UEE_LandPurchaseWidget::HideWidget()

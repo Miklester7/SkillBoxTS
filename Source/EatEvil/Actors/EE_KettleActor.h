@@ -36,9 +36,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Components")
 	UBoxComponent* BoxCollision;
 
-	UPROPERTY(EditAnywhere, Category = "Components")
-	UBoxComponent* InteractZoneCollision;
-
 	UPROPERTY(EditDefaultsOnly,Category = "UI")
 	TSubclassOf<UEE_KettleMenuWidget> KettleMenuWidgetClass;
 
@@ -54,9 +51,4 @@ private:
 	UFUNCTION()
 	void OnMouseReleased(UPrimitiveComponent* TouchedComponent, FKey ButtonReleased);
 
-	UFUNCTION()
-	void OnOverlaped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	virtual void PlayerInteracted() override;
 };

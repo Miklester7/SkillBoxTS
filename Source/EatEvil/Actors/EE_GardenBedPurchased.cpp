@@ -21,6 +21,7 @@ void AEE_GardenBedPurchased::BeginPlay()
 	Super::BeginPlay();
 	
 	bCanInteract = false;
+	InitWidget();
 }
 
 void AEE_GardenBedPurchased::InitWidget()
@@ -37,6 +38,7 @@ void AEE_GardenBedPurchased::InitWidget()
 		{
 			PWidget->OnPurchased.AddUObject(this, &AEE_GardenBedPurchased::UnlockPlace);
 			PWidget->OnHide.AddUObject(this, &AEE_GardenBedPurchased::HideWidget);
+			PWidget->InitWidget(Cost);
 		}
 		InteractWidget->SetHiddenInGame(true);
 	}

@@ -46,11 +46,13 @@ struct FStorageObject
 	GENERATED_BODY()
 
 	FStorageObject(const FName& InObjectRowName, const int32& InQuantity,const EObjectType& InObjectType) : ObjectRowName(InObjectRowName), Quantity(InQuantity), ObjectType(InObjectType){};
+	FStorageObject(const FName& InObjectRowName, const int32& InQuantity,const EObjectType& InObjectType,const int8 ObjectGrade) : ObjectRowName(InObjectRowName), Quantity(InQuantity), ObjectType(InObjectType), Grade(ObjectGrade){};
 	FStorageObject() { };
 
 	FName ObjectRowName;
 	int32 Quantity;
 	EObjectType ObjectType;
+	int8 Grade = -1;
 };
 
 USTRUCT(BlueprintType)
@@ -93,6 +95,9 @@ struct FPotionInfo
 
 	UPROPERTY(EditDefaultsOnly, Category = "Game")
 	UTexture2D* Image;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Game")
+	int32 Cost{ 100 };
 };
 
 USTRUCT(BlueprintType)

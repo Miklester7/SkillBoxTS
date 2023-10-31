@@ -79,6 +79,12 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	USizeBox* ObjectTypesBox;
 
+	UPROPERTY(EditDefaultsOnly,Category = "UI")
+	UTexture2D* LockImage2;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	UTexture2D* LockImage3;
+
 private:
 	FObjectInfo CurrentObjectInfo;
 
@@ -107,4 +113,7 @@ private:
 	void SetToStorage();
 
 	void UpdateResourceSlot();
+
+	bool Locked2{ true };
+	bool Locked3{ true };
 };

@@ -135,6 +135,7 @@ void UEE_GardenStatusWidget::PlantWasSelected(const FPlantsInfo& PlantInfo, cons
 {
 	if (GardenBedActor)
 	{
+		PlayAnimation(ShowScrollBox, 0.0f, 1, EUMGSequencePlayMode::Reverse);
 		GardenBedActor->SetNewPlant(PlantInfo, RowName);
 	}
 }

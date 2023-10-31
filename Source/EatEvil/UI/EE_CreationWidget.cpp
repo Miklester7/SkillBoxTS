@@ -52,12 +52,12 @@ void UEE_CreationWidget::InitWidget(const FName& RowName)
 					break;
 
 				case 1:
-					SecondTypeImage->SetBrushFromTexture(CurrentObjectInfo.PotionInfo[i].Image);
+					SecondTypeImage->SetBrushFromTexture(LockImage2);
 					SecondTypeName->SetText(CurrentObjectInfo.PotionInfo[i].ObjectName);
 					SecondTypeButton->bIsEnabled = true;
 					break;
 				case 2:
-					ThirdTypeImage->SetBrushFromTexture(CurrentObjectInfo.PotionInfo[i].Image);
+					ThirdTypeImage->SetBrushFromTexture(LockImage3);
 					ThirdTypeName->SetText(CurrentObjectInfo.PotionInfo[i].ObjectName);
 					ThirdTypeButton->bIsEnabled = true;
 					break;
@@ -109,6 +109,21 @@ void UEE_CreationWidget::SelectedFirstType()
 void UEE_CreationWidget::SelectedSecondType()
 {
 	const int8 Index = 1;
+	if (Locked2)
+	{
+		const auto GI = GetGameInstance<UEE_GameInstance>();
+		if (GI)
+		{
+			if (GI->GetMoney() >= 1000)
+			{
+				GI->SetMoney(-1000);
+				SecondTypeImage->SetBrushFromTexture(CurrentObjectInfo.PotionInfo[Index].Image);
+				Locked2 = false;
+			}
+			else return;
+		}
+	}
+
 	CurrentIndex = Index;
 	SelectedObjectImage->SetBrushFromTexture(CurrentObjectInfo.PotionInfo[Index].Image);
 	SelectedObjectName->SetText(CurrentObjectInfo.PotionInfo[Index].ObjectName);
@@ -120,6 +135,20 @@ void UEE_CreationWidget::SelectedSecondType()
 void UEE_CreationWidget::SelectedThirdType()
 {
 	const int8 Index = 2;
+	if (Locked3)
+	{
+		const auto GI = GetGameInstance<UEE_GameInstance>();
+		if (GI)
+		{
+			if (GI->GetMoney() >= 4000)
+			{
+				GI->SetMoney(-4000);
+				SecondTypeImage->SetBrushFromTexture(CurrentObjectInfo.PotionInfo[Index].Image);
+				Locked3 = false;
+			}
+			else return;
+		}
+	}
 	CurrentIndex = Index;
 	SelectedObjectImage->SetBrushFromTexture(CurrentObjectInfo.PotionInfo[Index].Image);
 	SelectedObjectName->SetText(CurrentObjectInfo.PotionInfo[Index].ObjectName);
@@ -143,8 +172,9 @@ void UEE_CreationWidget::CreateObject()
 			if(!GetWorld()->GetTimerManager().IsTimerActive(CreateTimer))
 			{
 				GetWorld()->GetTimerManager().SetTimer(CreateTimer, this, &UEE_CreationWidget::TimerUpdated, 0.25f, true);
+				SelectButton->SetIsEnabled(false);
 				ActionStatusName->SetText(FText::FromString(FString::Printf(TEXT("%02.0f%%"), (CurrentTime / CreateTime) * 100.f)));
-				StartCreateButton->bIsEnabled = false;
+				StartCreateButton->SetIsEnabled(false);
 			}
 		}
 	}
@@ -163,8 +193,9 @@ void UEE_CreationWidget::TimerUpdated()
 		CurrentTime = 0.f;
 		CreateProgressBar->SetPercent(0.f);
 		SetToStorage();
-		StartCreateButton->bIsEnabled = true;
+		StartCreateButton->SetIsEnabled(true);
 		ActionStatusName->SetText(FText::FromString("Create"));
+		SelectButton->SetIsEnabled(true);
 	}
 }
 
@@ -173,7 +204,7 @@ void UEE_CreationWidget::SetToStorage()
 	const auto GI = GetGameInstance<UEE_GameInstance>();
 	if (GI)
 	{
-		const FStorageObject Object(ObjectRowName, 1, EObjectType::Potion);
+		const FStorageObject Object(ObjectRowName, 1, EObjectType::Potion, CurrentIndex);
 		GI->PutForStorage(Object);
 	}
 }
