@@ -31,6 +31,9 @@ protected:
 	UButton* ForSaleButton;
 
 	UPROPERTY(meta = (BindWidget))
+	UButton* ExitButton;
+
+	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ObjectNameText;
 
 	UPROPERTY(meta = (BindWidget))
@@ -78,4 +81,7 @@ private:
 
 	void UpdateTextForPotion();
 	void UpdateTextForPlant();
+
+	UFUNCTION()
+	void CloseWidget();
 };

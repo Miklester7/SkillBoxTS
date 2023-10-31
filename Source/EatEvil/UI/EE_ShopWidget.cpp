@@ -16,7 +16,9 @@ void UEE_ShopWidget::NativeOnInitialized()
 
 	check(ShopSlotWidgetClass);
 	check(ForSaleButton);
-	
+	check(ExitButton);
+
+	ExitButton->OnClicked.AddDynamic(this, &UEE_ShopWidget::CloseWidget);
 	ForSaleButton->OnClicked.AddDynamic(this, &UEE_ShopWidget::SendToStore);
 
 	const auto GI = GetGameInstance<UEE_GameInstance>();
@@ -224,4 +226,9 @@ void UEE_ShopWidget::UpdateTextForPlant()
 	Power->SetText(FText::FromString(FString("")));
 	NumTriggersResult->SetText(FText::FromString(FString("")));
 	PowerResult->SetText(FText::FromString(FString("")));;
+}
+
+void UEE_ShopWidget::CloseWidget()
+{
+	this->RemoveFromParent();
 }
