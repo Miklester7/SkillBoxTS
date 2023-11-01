@@ -30,10 +30,14 @@ void UEE_ShopWidget::NativeOnInitialized()
 
 	UpdateStorageWidgets();
 	UpdateShopWidgets();
+
+	SetRenderOpasity(0.f);
 }
 
 void UEE_ShopWidget::OnObjectSelected(UTexture2D* InImage, const FText& InObjectName, const FName& RowName, UEE_ShopSlotWidget* Widget, const int32 Num, const int8 Grade)
 {
+	SetRenderOpasity(1.f);
+
 	SelectedWidget = Widget;
 	Image = InImage;
 	ObjName = InObjectName;
@@ -231,4 +235,16 @@ void UEE_ShopWidget::UpdateTextForPlant()
 void UEE_ShopWidget::CloseWidget()
 {
 	this->RemoveFromParent();
+}
+
+void UEE_ShopWidget::SetRenderOpasity(const float Value)
+{
+	NumberTriggersName->SetRenderOpacity(Value);
+	Power->SetRenderOpacity(Value);
+	NumTriggersResult->SetRenderOpacity(Value);
+	PowerResult->SetRenderOpacity(Value);
+	ObjectImage->SetRenderOpacity(Value);
+	ObjectNameText->SetRenderOpacity(Value);
+	Description->SetRenderOpacity(Value);
+	CostTextResult->SetRenderOpacity(Value);
 }

@@ -6,7 +6,7 @@
 #include "Animation/AnimNotifies/AnimNotify.h"
 #include "EE_AnimNotify_FirstType.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnNotifiedFTypeSignature);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnNotifiedFTypeSignature, USkeletalMeshComponent*);
 
 
 UCLASS()

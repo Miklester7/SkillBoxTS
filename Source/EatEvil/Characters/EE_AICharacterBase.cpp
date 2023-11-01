@@ -74,7 +74,7 @@ void AEE_AICharacterBase::PlayInteractAnim(EActionType Type)
 	}
 }
 
-void AEE_AICharacterBase::Action()
+void AEE_AICharacterBase::Action(USkeletalMeshComponent* SkeletalMesh)
 {
 	bIsAnimationPlaying = false;
 	DraggingComponent->ExecutableFunction();
@@ -82,7 +82,7 @@ void AEE_AICharacterBase::Action()
 	InstrumentMeshComponent->SetVisibility(false);
 }
 
-void AEE_AICharacterBase::PutInStorage()
+void AEE_AICharacterBase::PutInStorage(USkeletalMeshComponent* SkeletalMesh)
 {
 	bIsAnimationPlaying = false;
 	DraggingComponent->ExecutableFunction();

@@ -84,4 +84,6 @@ private:
 
 	UFUNCTION()
 	void CloseWidget();
+
+	void SetRenderOpasity(const float Value);
 };

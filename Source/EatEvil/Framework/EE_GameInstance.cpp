@@ -45,7 +45,7 @@ void UEE_GameInstance::PutForStorage(const FStorageObject StorageObject)
 	{
 		const auto Index = ObjectsInStorage.IndexOfByPredicate([&](const FStorageObject& Object) {
 
-			return Object.ObjectRowName == StorageObject.ObjectRowName;
+			return Object.ObjectRowName == StorageObject.ObjectRowName && Object.Grade == StorageObject.Grade;
 			});
 
 		if (Index == INDEX_NONE)
@@ -73,7 +73,7 @@ void UEE_GameInstance::PutForShop(const FStorageObject StorageObject)
 	{
 		const auto Index = ObjectsInShop.IndexOfByPredicate([&](const FStorageObject& Object) {
 
-			return Object.ObjectRowName == StorageObject.ObjectRowName;
+			return Object.ObjectRowName == StorageObject.ObjectRowName && Object.Grade == StorageObject.Grade;
 			});
 
 		if (Index == INDEX_NONE)
@@ -116,17 +116,17 @@ bool UEE_GameInstance::GetFromStorage(const FName& ObjectName, const int32 Num)
 
 bool UEE_GameInstance::GetFromShop(const FName& ObjectName, const int32 Grade)
 {
-	const auto Index = ObjectsInStorage.IndexOfByPredicate([&](const FStorageObject& Object)
+	const auto Index = ObjectsInShop.IndexOfByPredicate([&](const FStorageObject& Object)
 		{
 			return Object.ObjectRowName == ObjectName && Object.Grade == Grade;
 		});
 
-	if (Index == INDEX_NONE || ObjectsInStorage[Index].Quantity < 1) return false;
+	if (Index == INDEX_NONE) return false;
 
-	ObjectsInStorage[Index].Quantity -= 1;
-	if (ObjectsInStorage[Index].Quantity == 0)
+	ObjectsInShop[Index].Quantity -= 1;
+	if (ObjectsInShop[Index].Quantity == 0)
 	{
-		ObjectsInStorage.RemoveAt(Index);
+		ObjectsInShop.RemoveAt(Index);
 	}
 
 	OnShopUpdated.Broadcast();
@@ -148,14 +148,14 @@ void UEE_GameInstance::SendToShop(const FName& RowName, const int32 Grade)
 	{
 		Index = ObjectsInStorage.IndexOfByPredicate([&](const FStorageObject& Object)
 			{
-				return Object.ObjectRowName == RowName;
+				return Object.ObjectRowName == RowName && Object.Grade == Grade;
 			});
 	}
 	else
 	{
 		Index = ObjectsInStorage.IndexOfByPredicate([&](const FStorageObject& Object)
 			{
-				return Object.ObjectRowName == RowName && Object.Grade == Grade;
+				return Object.ObjectRowName == RowName;
 			});
 	}
 

@@ -6,7 +6,7 @@
 #include "Animation/AnimNotifies/AnimNotify.h"
 #include "EE_AnimNotify_SecondType.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnNotifiedSTypeSignature);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnNotifiedSTypeSignature, USkeletalMeshComponent*);
 
 UCLASS()
 class EATEVIL_API UEE_AnimNotify_SecondType : public UAnimNotify

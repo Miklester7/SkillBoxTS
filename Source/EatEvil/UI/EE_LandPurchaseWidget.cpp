@@ -23,7 +23,7 @@ void UEE_LandPurchaseWidget::InitWidget(const int32 InCost)
 	{
 		GI->OnMoneyUpdated.AddUObject(this, &UEE_LandPurchaseWidget::CanBuy);
 	}
-	CanBuy(0);
+	CanBuy(1);
 
 	if(CostText)
 	{
@@ -50,6 +50,10 @@ void UEE_LandPurchaseWidget::CanBuy(const int32 Value)
 		if (GI->GetMoney() < Cost)
 		{
 			BuyButton->SetIsEnabled(false);
+		}
+		else
+		{
+			BuyButton->SetIsEnabled(true);
 		}
 	}
 }

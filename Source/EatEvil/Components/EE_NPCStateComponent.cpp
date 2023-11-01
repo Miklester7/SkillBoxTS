@@ -44,10 +44,16 @@ void UEE_NPCStateComponent::Drink(const FName& DrinkName, const float Effect, US
 {
 	OnDrink.Broadcast();
 	CurrentMesh = Mesh;
+	CurrentName = DrinkName;
+	CurrentEffect = Effect;
 
-	if (DrinkName == AlcoholRowName)
+}
+
+bool UEE_NPCStateComponent::Use()
+{
+	if (CurrentName == AlcoholRowName)
 	{
-		const float NewValue = Alcohol + Effect;
+		const float NewValue = Alcohol + CurrentEffect;
 		if (NewValue > 1)
 		{
 			Alcohol = 1.f;
@@ -59,20 +65,21 @@ void UEE_NPCStateComponent::Drink(const FName& DrinkName, const float Effect, US
 		{
 			Alcohol = NewValue;
 		}
-		return;
+		return Drunk;
 	}
 
-	if (DrinkName == AntiAlcoholRowName)
+	if (CurrentName == AntiAlcoholRowName)
 	{
-		AntiAlcohol = FMath::Clamp(AntiAlcohol + Effect, 0.f, 1.f);
-		Alcohol = FMath::Clamp(Alcohol - Effect, 0.f, 1.f);
-		return;
+		AntiAlcohol = FMath::Clamp(AntiAlcohol + CurrentEffect, 0.f, 1.f);
+		Alcohol = FMath::Clamp(Alcohol - CurrentEffect, 0.f, 1.f);
+		return Drunk;
 	}
 
-	if (DrinkName == NutrientsRowName)
+	if (CurrentName == NutrientsRowName)
 	{
-		Nutrients = FMath::Clamp(Nutrients + Effect, 0.f, 1.f);
+		Nutrients = FMath::Clamp(Nutrients + CurrentEffect, 0.f, 1.f);
 	}
+	return Drunk;
 }
 
 void UEE_NPCStateComponent::BeginPlay()

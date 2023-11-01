@@ -5,7 +5,7 @@
 
 void UEE_AnimNotify_SecondType::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
-	OnNotifiedSTypeSignature.Broadcast();
+	OnNotifiedSTypeSignature.Broadcast(MeshComp);
 
 	Super::Notify(MeshComp, Animation);
 }

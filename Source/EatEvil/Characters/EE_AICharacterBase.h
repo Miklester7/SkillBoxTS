@@ -10,6 +10,7 @@
 class UBehaviorTree;
 class UEE_DraggingComponent;
 class UStaticMeshComponent;
+class USkeletalMeshComponent;
 
 UCLASS()
 class EATEVIL_API AEE_AICharacterBase : public ACharacter
@@ -54,8 +55,8 @@ protected:
 private:
 	void PlayInteractAnim(EActionType Type);
 
-	void Action();
-	void PutInStorage();
+	void Action(USkeletalMeshComponent* Mesh);
+	void PutInStorage(USkeletalMeshComponent* Mesh);
 
 	void AttachComponents();
 

@@ -34,6 +34,8 @@ public:
 
 	UPROPERTY()
 	TObjectPtr<UStaticMesh> CurrentMesh;
+
+	bool Use();
 protected:
 	virtual void BeginPlay() override;
 
@@ -52,5 +54,8 @@ private:
 	bool Drunk{ false };
 private:
 	void Update();
+
+	FName CurrentName;
+	float CurrentEffect{ 1.f };
 		
 };

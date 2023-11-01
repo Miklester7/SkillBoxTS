@@ -11,6 +11,8 @@ class UEE_NPCStateComponent;
 class UWidgetComponent;
 class UEE_NPSStatusWidget;
 class UAnimMontage;
+class AEE_Bottle;
+class USkeletalMeshComponent;
 
 UCLASS()
 class EATEVIL_API AEE_AINPC_Character : public ACharacter
@@ -45,10 +47,31 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Animation")
 	UAnimMontage* SleepAnimMontage;
-public:	
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Animation")
+	UAnimMontage* UpAnimMontage;
+
+	UPROPERTY(EditDefaultsOnly,Category = "SpawnActor")
+	TSubclassOf<AEE_Bottle> BottleActorClass;
+
+	UPROPERTY(EditAnywhere,Category = "SpawnActor")
+	FName SocketName;
+public:	 
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable)
+	bool GetDrunk() { return Drunk; }
 private:
-	void ActionEnd();
-	void PlaySecondAnimMontage();
+	void ActionEnd(USkeletalMeshComponent* Mesh);
+	void PlaySecondAnimMontage(USkeletalMeshComponent* Mesh);
+
+	UPROPERTY()
+	TObjectPtr<AEE_Bottle> CurrentBottleActor;
+
+	void SetDrunk(bool Value);
+	bool Drunk{ false };
+
+	void ReturnMovement(USkeletalMeshComponent* SkeletalMesh);
+
+	void PlayUpMontage(USkeletalMeshComponent* SkeletalMesh);
 };
