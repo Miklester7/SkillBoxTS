@@ -98,6 +98,9 @@ struct FPotionInfo
 
 	UPROPERTY(EditDefaultsOnly, Category = "Game")
 	int32 Cost{ 100 };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Mesh")
+	UStaticMesh* ObjectMesh;
 };
 
 USTRUCT(BlueprintType)

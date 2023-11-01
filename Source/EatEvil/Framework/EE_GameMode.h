@@ -13,6 +13,11 @@ class AEE_GameMode : public AGameModeBase
 
 public:
 	AEE_GameMode();
+
+	bool IsShopEmpty() { return bIsShopEmpty; }
+	void SetShopEmpty(bool IsEmpty) { bIsShopEmpty = IsEmpty; }
+private:
+	bool bIsShopEmpty{ true };
 };
 
 

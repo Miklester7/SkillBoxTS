@@ -114,6 +114,26 @@ bool UEE_GameInstance::GetFromStorage(const FName& ObjectName, const int32 Num)
 	return true;
 }
 
+bool UEE_GameInstance::GetFromShop(const FName& ObjectName, const int32 Grade)
+{
+	const auto Index = ObjectsInStorage.IndexOfByPredicate([&](const FStorageObject& Object)
+		{
+			return Object.ObjectRowName == ObjectName && Object.Grade == Grade;
+		});
+
+	if (Index == INDEX_NONE || ObjectsInStorage[Index].Quantity < 1) return false;
+
+	ObjectsInStorage[Index].Quantity -= 1;
+	if (ObjectsInStorage[Index].Quantity == 0)
+	{
+		ObjectsInStorage.RemoveAt(Index);
+	}
+
+	OnShopUpdated.Broadcast();
+
+	return true;
+}
+
 void UEE_GameInstance::SetMoney(const int32 Value)
 {
 	Money = FMath::Clamp(Money + Value, 0, INT32_MAX);

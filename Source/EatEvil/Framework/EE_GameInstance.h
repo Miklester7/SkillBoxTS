@@ -29,6 +29,7 @@ public:
 	const TArray<FName>& GetUnblockedPlants() { return UnblockedPlants; }
 
 	bool GetFromStorage(const FName& ObjectName,const int32 Num);
+	bool GetFromShop(const FName& ObjectName, const int32 Grade);
 	const TArray<FStorageObject>& GetAllObjectsFromStorage() { return ObjectsInStorage; }
 	const TArray<FStorageObject>& GetAllObjectsFromShop() { return ObjectsInShop; }
 
