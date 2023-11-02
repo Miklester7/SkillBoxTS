@@ -194,7 +194,6 @@ void AEE_GardenBedActorBase::InteractZoneOverlaped(UPrimitiveComponent* Overlapp
 				{
 					const auto PlantNames = GI->GetUnblockedPlants();
 					const FName RowName = PlantNames[FMath::RandHelper(PlantNames.Num())];
-					PlantRow = RowName;
 					FPlantsInfo Info;
 
 					if (GI->GetPlantInfo(RowName, Info)) SetNewPlant(Info, RowName);

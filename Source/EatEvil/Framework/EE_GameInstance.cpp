@@ -57,11 +57,6 @@ void UEE_GameInstance::PutForStorage(const FStorageObject StorageObject)
 			ObjectsInStorage[Index].Quantity += StorageObject.Quantity;
 			UE_LOG(UEE_GameInstanceLog, Warning, TEXT("ObjectsInStorage: Name.%s,Quantity.%i "), *ObjectsInStorage[Index].ObjectRowName.ToString(), ObjectsInStorage[Index].Quantity);
 		}
-		
-		if (!UnblockedPlants.Contains(StorageObject.ObjectRowName))
-		{
-			UnblockedPlants.Add(StorageObject.ObjectRowName);
-		}
 
 		OnStorageUpdated.Broadcast();
 	}
@@ -84,11 +79,6 @@ void UEE_GameInstance::PutForShop(const FStorageObject StorageObject)
 		{
 			ObjectsInShop[Index].Quantity += StorageObject.Quantity;
 			UE_LOG(UEE_GameInstanceLog, Warning, TEXT("ObjectsInShop: Name.%s,Quantity.%i "), *ObjectsInShop[Index].ObjectRowName.ToString(), ObjectsInShop[Index].Quantity);
-		}
-
-		if (!UnblockedPlants.Contains(StorageObject.ObjectRowName))
-		{
-			UnblockedPlants.Add(StorageObject.ObjectRowName);
 		}
 		OnShopUpdated.Broadcast();
 	}
